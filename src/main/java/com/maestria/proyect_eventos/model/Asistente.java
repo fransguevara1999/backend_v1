@@ -1,26 +1,32 @@
 package com.maestria.proyect_eventos.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "asistentes")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Asistente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name; // Cambiar a "nombre"
-    private String dni; // Suponiendo que es un identificador único
+    private String nombre;
+    private String dni;
 
     @ManyToMany
     @JoinTable(
-            name = "event_attendee", // Tal vez cambiar a "evento_asistente"
+            name = "evento_asistente",
             joinColumns = @JoinColumn(name = "asistente_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
+            inverseJoinColumns = @JoinColumn(name = "evento_id")
     )
-    private Set<Event> attendedEvents; // Cambiar a "eventosAsistidos"
+    private Set<Event> eventosAsistidos;
 }

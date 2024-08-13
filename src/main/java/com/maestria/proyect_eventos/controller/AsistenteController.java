@@ -1,5 +1,6 @@
 package com.maestria.proyect_eventos.controller;
 
+import com.maestria.proyect_eventos.Dto.AsistenteDto;
 import com.maestria.proyect_eventos.model.Asistente;
 import com.maestria.proyect_eventos.model.Event;
 import com.maestria.proyect_eventos.services.AsistenteService;
@@ -27,35 +28,33 @@ public class AsistenteController {
         return asistente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public Asistente createAsistente(@RequestBody Asistente asistente) {
-        return asistenteService.createOrUpdateAsistente(asistente);
+    @PostMapping("/{eventId}")
+    public ResponseEntity<AsistenteDto> createAsistente(@PathVariable Long eventId, @RequestBody AsistenteDto asistenteDto) {
+        AsistenteDto createdAsistente = asistenteService.createOrUpdateAsistente(asistenteDto, eventId);
+        return ResponseEntity.ok(createdAsistente);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Asistente> updateAsistente(@PathVariable Long id, @RequestBody Asistente asistenteDetails) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAsistente(@PathVariable Long id) {
         Optional<Asistente> asistente = asistenteService.getAsistenteById(id);
         if (asistente.isPresent()) {
-            asistenteDetails.setId(id);
-            return ResponseEntity.ok(asistenteService.createOrUpdateAsistente(asistenteDetails));
+            asistenteService.deleteAsistente(id);
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAsistente(@PathVariable Long id) {
-        asistenteService.deleteAsistente(id);
-        return ResponseEntity.noContent().build();
-    }
     @GetMapping("/evento/{eventId}")
     public List<Asistente> getAsistentesPorEvento(@PathVariable Long eventId) {
-          Event event = new Event();
+        Event event = new Event();
         event.setId(eventId);
         return asistenteService.getAsistentesPorEvento(event);
     }
+
     @PostMapping("/evento/{eventId}/registrar")
-    public Asistente registrarAsistente(@PathVariable Long eventId, @RequestBody Asistente asistente) {
-        return asistenteService.registrarAsistente(eventId, asistente);
+    public ResponseEntity<Asistente> registrarAsistente(@PathVariable Long eventId, @RequestBody AsistenteDto asistenteDto) {
+        Asistente registrado = asistenteService.registrarAsistencia(eventId, asistenteDto);
+        return ResponseEntity.ok(registrado);
     }
 }

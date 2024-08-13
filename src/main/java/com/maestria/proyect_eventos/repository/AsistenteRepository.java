@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AsistenteRepository extends JpaRepository<Asistente, Long> {
-    List<Asistente> findByAttendedEvents(Event event);
+    List<Asistente> findByEventosAsistidos(Event event);
+    Optional<Asistente> findByDni(String dni);
+    void deleteById(Long id);
 }
